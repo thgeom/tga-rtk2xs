@@ -1,8 +1,8 @@
 # tga-rtk2xs
-# This program shall be used for rtk data file in csv format into AutoCAD drawing.
+# This program shall be used for RTK data file in CSV format into AutoCAD drawing.
 # The X-section line can be created with extended data in the AutoCAD
-# From rtk points and X-section line, the program shall be extract X-section points to CSV file in X-section format
-# To procees that rtk data, the parameter file is required for setting up the enveronment
+# From RTK points and X-section line, the program shall be extract X-section points to CSV file in X-section format
+# To procees that RTK data, the parameter file is required for setting up the enveronment
 # :pparams.par is an example file as shown:
 {
 "WorkDirectory" : "d:/TGA_TEST/RTK/",
