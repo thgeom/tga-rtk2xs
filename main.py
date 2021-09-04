@@ -34,15 +34,12 @@ def setparams():
     completed_color = proj_params['CompletedColor']
     xsline_completed_layer = proj_params['XSLineCompletedLayer']
     Buffer = proj_params['Buffer']
-    doc = is_cadconnected()
+    doc = is_cadopen()
     if doc is None:
-        msg = 'Connect to AutoCAD failed.!!!\n'
-        msg += 'Press Esc on AutoCAD window then try again.'
-        warn_message(msg)
         return False
     return doc
 
-def open():
+def selectfile():
     global proj_params
 
     statusbox(sta_label, 'Open parameter file.')
@@ -53,6 +50,8 @@ def open():
     #print(proj_params)
     if proj_params == {}:
         msg = 'Incorrect Parameter File format!!!'
+        for i in range(4):
+            cad.entryconfig(i, state=DISABLED)
         warn_message(msg)
         return
     conn_ok = setparams()               # Check parameters & CAD connection
@@ -66,20 +65,33 @@ def open():
 def importpoints():
     #show_message('>>>')
     #print('>>>')
+    if not is_cadready():
+        return False
     statusbox(sta_label, 'Importing points...')
     #statusbox2('Importing points...')
     rtkdata = getRTK(workdir, rtkfile)
     rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
 
 def drawxline():
+    doc = is_cadready()
+    if not doc:
+        return False
     statusbox(sta_label, 'Create Line of X-Section.')
     createxline(cadapp, xsline_layer, chn_layer, xscode_layer)
 
 def xs2file():
+    doc = is_cadready()
+    if not doc:
+        return False
     statusbox(sta_label, 'Extract X-Section...')
     statusbox(sta_label, 'Interact with AutoCAD Window >>>')
     #createxsfile(proj_params)
     createxsfile(doc, proj_params, sta_label)
+    cad.entryconfig(3, state=NORMAL)
+
+def xs2xlsfile():
+    statusbox(sta_label, 'Create Excel file of X-section')
+    createxls()
 
 def main():
     global cad, sta_label
@@ -87,7 +99,7 @@ def main():
     menubar = Menu(top)
     file = Menu(menubar, tearoff=0)
     #file.add_command(label="New")
-    file.add_command(label="Open", command=open)
+    file.add_command(label="Open", command=selectfile)
     #file.add_command(label="Save")
     #file.add_command(label="Save as...")
     #file.add_command(label="Close")
@@ -98,8 +110,9 @@ def main():
     menubar.add_cascade(label="File", menu=file)
     cad = Menu(menubar, tearoff=0)
     cad.add_command(label="Import Points", state=DISABLED, command=importpoints)
-    cad.add_command(label="Draw X-line", state=DISABLED, command=drawxline)
+    cad.add_command(label="Draw X-Line", state=DISABLED, command=drawxline)
     cad.add_command(label="eXtract XS", state=DISABLED, command=xs2file)
+    cad.add_command(label="XS->Excel", state=DISABLED, command=xs2xlsfile)
 
     cad.add_separator()
 

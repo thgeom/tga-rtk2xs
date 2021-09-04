@@ -19,8 +19,22 @@ class Xs4Xls:
     # Writing data to Excel file using Pandas Data Frame
     def xs2xlsFile(self):
         df = pd.DataFrame(self.data, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to Excel
+        """
         with pd.ExcelWriter(self.fdir + self.fout, mode='w') as writer:
             df.to_excel(writer, sheet_name='Offset_Elevation')
+        """
+        xlsname = self.fdir + self.fout
+        try:
+            writer = pd.ExcelWriter(xlsname, mode='w')
+        except:
+            msg = 'Excel File : {} : currently in use!!!'.format(xlsname)
+            msg += '\nPlease close it, then process again.'
+            warn_message(msg)
+            return False
+        df.to_excel(writer, sheet_name='Offset_Elevation')
+        writer.save()
+        msg = 'Excel File : {} : has been created.'.format(xlsname)
+        show_message(msg)
 
 # X-section class for data manipulation
 class XsInfo:
@@ -195,6 +209,7 @@ slcn = doc.SelectionSets.Add("SS1")
 def createxsfile(doci, proj_params, sta_label):
     global xscode_layer, completed_color, xsline_completed_layer
     global doc, cadapp
+    global xlsdata
 
     doc = doci
     workdir = proj_params['WorkDirectory']
@@ -289,7 +304,16 @@ def createxsfile(doci, proj_params, sta_label):
             #slcn[i].Layer = 'XS_Line_Completed'                 # change XS_Line to completed
         j += 1
     #for
-    xlsdata.xs2xlsFile()                                        # Call xlsdata.xs2xlsFile -> Data to Excel
     msg = '>>>> Total {:d} X-sections extraction completed.'.format(XsInfo.num_xs)
     doc.Utility.Prompt(msg + '\n')  # Echo to CAD command prompt
     show_message(msg)
+    return xlsdata
+
+# To create Excel file of X-section
+def createxls():
+    if xlsdata:
+        xlsdata.xs2xlsFile()                                        # Call xlsdata.xs2xlsFile -> Data to Excel
+    else:
+        msg = 'Please run [eXtract XS] before this!'
+        show_message(msg)
+

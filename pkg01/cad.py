@@ -7,23 +7,40 @@ acad = win32com.client.Dispatch("AutoCAD.Application")                  # AutoCA
 #doc = acad.ActiveDocument
 #print(dir(acad))
 
+# Check AutoCAD Opened?
+def is_cadopen():
+    cadopen = False
+
+    #print(dir(acad))
+    if acad.Visible:
+        cadopen = True
+        #return doc
+    else:
+        msg = 'AutoCAD is not Running.!!!\n'
+        msg += 'Please open AutoCAD Drawing then try again.'
+        warn_message(msg)
+    return cadopen
+
 # Verify AutoCAD connection
-def is_cadconnected():
+def is_cadready():
     global doc, acprompt, ms
-    conn_ok = False
+    cadready = False
     try:
         doc = acad.ActiveDocument
+        acprompt = doc.Utility.Prompt                                           # ACAD prompt
+        ms = doc.ModelSpace
         #print(doc)
         print('File {} connected.'.format(doc.Name))
         #doc.Utility.Prompt("Execute from python\n")
-        acprompt = doc.Utility.Prompt                                           # ACAD prompt
-        ms = doc.ModelSpace
-        conn_ok = True
+        cadready = True
         return doc
     except AttributeError:
-        print('Connect to AutoCAD failed.!!!')
-        print('Press Esc on AutoCAD window then try again.')
-        return conn_ok
+        #print('Connect to AutoCAD failed!!!')
+        #print('Press Esc on AutoCAD window then try again.')
+        msg = 'AutoCAD currently in use!!!\n'
+        msg += 'Press Esc on AutoCAD window then try again.'
+        warn_message(msg)
+        return cadready
 
 
 #doc.Utility.Prompt("Execute from python\n")
