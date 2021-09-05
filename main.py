@@ -79,19 +79,21 @@ def drawxline():
     statusbox(sta_label, 'Create Line of X-Section.')
     createxline(cadapp, xsline_layer, chn_layer, xscode_layer)
 
-def xs2file():
+def xs2dtabs():
     doc = is_cadready()
     if not doc:
         return False
     statusbox(sta_label, 'Extract X-Section...')
     statusbox(sta_label, 'Interact with AutoCAD Window >>>')
     #createxsfile(proj_params)
-    createxsfile(doc, proj_params, sta_label)
+    xsdtab = create_xs_dtab(doc, proj_params, sta_label)
     cad.entryconfig(3, state=NORMAL)
+    #xsdtab.xs_show_csvdata()
+    #xsdtab.xs_show_xyzdata()
 
-def xs2xlsfile():
-    statusbox(sta_label, 'Create Excel file of X-section')
-    createxls()
+def xs2files():
+    statusbox(sta_label, 'Create Files of X-section')
+    create_xs_file()
 
 def main():
     global cad, sta_label
@@ -111,8 +113,8 @@ def main():
     cad = Menu(menubar, tearoff=0)
     cad.add_command(label="Import Points", state=DISABLED, command=importpoints)
     cad.add_command(label="Draw X-Line", state=DISABLED, command=drawxline)
-    cad.add_command(label="eXtract XS", state=DISABLED, command=xs2file)
-    cad.add_command(label="XS->Excel", state=DISABLED, command=xs2xlsfile)
+    cad.add_command(label="eXtract XS", state=DISABLED, command=xs2dtabs)
+    cad.add_command(label="XS->Files", state=DISABLED, command=xs2files)
 
     cad.add_separator()
 
