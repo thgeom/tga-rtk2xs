@@ -194,5 +194,5 @@ def createxline(cadapp, xsllay, chnlay, xsptlay):
     cadProc(xsObj, pcObj, chn, cadapp, xsllay, chnlay)                         #Call cadProc to manipulate XS_Line
     doc.Application.Update()                                #Redraw CAD window
     doc.Utility.Prompt('>>>> X-section : {} has been created.\n'.format(chn))
-    show_message('>>>> X-section : {} has been created.\n'.format(chn))
+    print('>>>> X-section : {} has been created.'.format(chn))
 

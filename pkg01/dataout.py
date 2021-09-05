@@ -38,8 +38,8 @@ class Xs4File:
         dfcsv = pd.DataFrame(self.dtcsv, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to CSV
         dfxyz = pd.DataFrame(self.dtxyz, columns=['East', 'North', 'Elevation', 'Code']) # DataFrame to CSV
 
-        print(dfcsv)
-        print(dfxyz)
+        #print(dfcsv)
+        #print(dfxyz)
 
         """
         with pd.ExcelWriter(self.fdir + self.fout, mode='w') as writer:
@@ -62,7 +62,9 @@ class Xs4File:
             return False
         dfxls.to_excel(writer1, sheet_name='Offset_Elevation')
         writer1.save()
-        msg = 'Excel File : {} : has been created.'.format(xlsname)
+        msg = '>>>> Excel File : {},\n'.format(xlsname)
+        msg += '>>>> Csv File : {} & '.format(csvname)
+        msg += '{} : have been created.'.format(xyzname)
         show_message(msg)
 
 # X-section class for data manipulation
@@ -336,7 +338,7 @@ def create_xs_dtab(doci, proj_params, sta_label):
             #slcn[i].Layer = 'XS_Line_Completed'                 # change XS_Line to completed
         j += 1
     #for
-    msg = '>>>> Total {:d} X-sections extraction completed.'.format(XsInfo.num_xs)
+    msg = '>>>> Total {:d} X-sections extracted.'.format(XsInfo.num_xs)
     doc.Utility.Prompt(msg + '\n')  # Echo to CAD command prompt
     show_message(msg)
     return data4file
