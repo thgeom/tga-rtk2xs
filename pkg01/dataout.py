@@ -1,38 +1,67 @@
 #import pythoncom
 import pandas as pd
+import csv
 from sympy import Line                   # For geometry calculation
 
 #from pkg02.util import *
 from pkg01.cad import *
 
-# Class Xs4Xls to prepare X-section data for Excel file
-class Xs4Xls:
-    def __init__(self, fdir, fout):
+# Class Xs4Xls to prepare X-section data for Output files
+class Xs4File:
+    def __init__(self, fdir, fxls, fcsv, fxyz):
         self.fdir = fdir
-        self.fout = fout
-        self.data = []
+        self.fxls = fxls
+        self.fcsv = fcsv
+        self.fxyz = fxyz
+        self.dtcsv = []
+        self.dtxyz = []
+        self.dtxls = []
 
-    def xsAdd(self, xsdt):
-        for i in xsdt:
-            self.data.append(i)
+    def xsAdd(self, dicsv, dixyz, dixls):
+        for i in dicsv:
+            self.dtcsv.append(i)
+        for i in dixyz:
+            self.dtxyz.append(i)
+        for i in dixls:
+            self.dtxls.append(i)
+
+    def xs_show_csvdata(self):
+        print(self.dtcsv)
+
+    def xs_show_xyzdata(self):
+        print(self.dtxyz)
+
 
     # Writing data to Excel file using Pandas Data Frame
-    def xs2xlsFile(self):
-        df = pd.DataFrame(self.data, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to Excel
+    def xs2File(self):
+        dfxls = pd.DataFrame(self.dtxls, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to Excel
+        dfcsv = pd.DataFrame(self.dtcsv, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to CSV
+        dfxyz = pd.DataFrame(self.dtxyz, columns=['East', 'North', 'Elevation', 'Code']) # DataFrame to CSV
+
+        print(dfcsv)
+        print(dfxyz)
+
         """
         with pd.ExcelWriter(self.fdir + self.fout, mode='w') as writer:
             df.to_excel(writer, sheet_name='Offset_Elevation')
         """
-        xlsname = self.fdir + self.fout
+        xlsname = self.fdir + self.fxls
+        csvname = self.fdir + self.fcsv
+        xyzname = self.fdir + self.fxyz
+
+        #dfxyz.to_csv(xyzname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+
         try:
-            writer = pd.ExcelWriter(xlsname, mode='w')
+            writer1 = pd.ExcelWriter(xlsname, mode='w')
+            dfcsv.to_csv(csvname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            dfxyz.to_csv(xyzname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
         except:
             msg = 'Excel File : {} : currently in use!!!'.format(xlsname)
             msg += '\nPlease close it, then process again.'
             warn_message(msg)
             return False
-        df.to_excel(writer, sheet_name='Offset_Elevation')
-        writer.save()
+        dfxls.to_excel(writer1, sheet_name='Offset_Elevation')
+        writer1.save()
         msg = 'Excel File : {} : has been created.'.format(xlsname)
         show_message(msg)
 
@@ -50,6 +79,8 @@ class XsInfo:
         #self.ptc = ptc
         self.buffer = buffer
         self._initsl()
+        self.dt2csv = []
+        self.dt2xyz = []
         self.dt2xls = []
         XsInfo.num_xs += 1
 
@@ -140,30 +171,30 @@ class XsInfo:
         if (xs_ang > math.pi * 0.5) and (xs_ang < math.pi * 1.5):
             self.enz.reverse()
 
-    # Writing XS points to CSV file
-    def xs2csvFile(self, fdir, fout):
-        f1 = open(fdir + fout, "a")                         # Open file output for Offset & Elavation
-        f2 = open(fdir + 'xyz_' + fout, "a")                # Open file output for ENZ
-        f1.write(self.CHN)
-        f2.write(self.CHN + '\n')
+    # Ctreate XS points to Data table
+    def xs2DTab(self):
+        self.dt2xyz.append([self.CHN, '', '', ''])               # For XYZ file
         i = 0
         self.dt2xls = []                                         # For Excel
         for pt in self.ofs_ele:
             if i == 0:
-                f1.write('      {0:0.0f}     {1:0.3f}    {2}\n'.format(pt[1][0], pt[1][1], pt[0]))
+                #f1.write('      {0:0.0f}     {1:0.3f}    {2}\n'.format(pt[1][0], pt[1][1], pt[0]))
                 ofs_ele = ([self.CHN, round(pt[1][0]), pt[1][1], pt[0]])      #Data format for Excel
+                self.dt2csv.append(ofs_ele)
                 self.dt2xls.append(ofs_ele)
             else:
-                f1.write('           {0:0.0f}     {1:0.3f}    {2}\n'.format(pt[1][0], pt[1][1], pt[0]))
-                ofs_ele = (['        ', round(pt[1][0]), pt[1][1], pt[0]])
+                #f1.write('           {0:0.0f}     {1:0.3f}    {2}\n'.format(pt[1][0], pt[1][1], pt[0]))
+                ofs_ele = (['  ', round(pt[1][0]), pt[1][1], pt[0]])
+                self.dt2csv.append(ofs_ele)
                 self.dt2xls.append(ofs_ele)
             i += 1
         for pt in self.enz:
-            f2.write('{0:0.3f}   {1:0.3f}   {2:0.3f}   {3}\n'.format(pt[1][0], pt[1][1], pt[1][2], pt[0]))
-            #Write ENZ to file
-        f2.write('#\n')
-        f1.close()
-        f2.close()
+            #f2.write('{0:0.3f}   {1:0.3f}   {2:0.3f}   {3}\n'.format(pt[1][0], pt[1][1], pt[1][2], pt[0]))
+            enzi = ([round(pt[1][0],3), round(pt[1][1],3), round(pt[1][2],3), pt[0]])
+            self.dt2xyz.append(enzi)
+        # End for
+        # Append '#' end of section
+        self.dt2xyz.append(['#', '', '', ''])
         print('Total points = {:d} '.format(i))
         for i in self.slpts:                            # Change color of XS_Code to completed-color
             i.Color = completed_color
@@ -206,14 +237,15 @@ slcn = doc.SelectionSets.Add("SS1")
 """
 
 #==========
-def createxsfile(doci, proj_params, sta_label):
+def create_xs_dtab(doci, proj_params, sta_label):
     global xscode_layer, completed_color, xsline_completed_layer
     global doc, cadapp
-    global xlsdata
+    global data4file
 
     doc = doci
     workdir = proj_params['WorkDirectory']
-    outfile = proj_params['OutputCsvFile']
+    csvfname = proj_params['OutputCsvFile']
+    xyzfname = 'xyz_' + csvfname
     xlsfname = proj_params['OutputXlsFile']
 
     cadapp = proj_params['CadApp']
@@ -250,7 +282,7 @@ def createxsfile(doci, proj_params, sta_label):
     #xlsfname = None
     #while not xlsfname:
     #xlsfname = doc.Utility.GetString(1, 'Output Excel file name : ')
-    xlsdata = Xs4Xls(workdir, xlsfname)    # Excel file name from proj_params
+    data4file = Xs4File(workdir, xlsfname, csvfname, xyzfname)    # File name from proj_params
     print('>>>X-section extraction start')
     doc.Regen(1)
     # Filtered of Line on layer XS_Line
@@ -299,20 +331,20 @@ def createxsfile(doci, proj_params, sta_label):
             #print(xsObj1.enz)
 
             #xsObj1.xs2csvFile('d:/TGA_Lisp/', 'xsec-0.csv')     # Call Xs2File by giving Directory & FileName
-            xsObj1.xs2csvFile(workdir, outfile)     # Call Xs2File by giving Directory & FileName
-            xlsdata.xsAdd(xsObj1.dt2xls)
+            xsObj1.xs2DTab()                  # Call Xs2Df
+            data4file.xsAdd(xsObj1.dt2csv, xsObj1.dt2xyz, xsObj1.dt2xls)
             #slcn[i].Layer = 'XS_Line_Completed'                 # change XS_Line to completed
         j += 1
     #for
     msg = '>>>> Total {:d} X-sections extraction completed.'.format(XsInfo.num_xs)
     doc.Utility.Prompt(msg + '\n')  # Echo to CAD command prompt
     show_message(msg)
-    return xlsdata
+    return data4file
 
-# To create Excel file of X-section
-def createxls():
-    if xlsdata:
-        xlsdata.xs2xlsFile()                                        # Call xlsdata.xs2xlsFile -> Data to Excel
+# To create Files of X-section
+def create_xs_file():
+    if data4file:
+        data4file.xs2File()                                        # Call xlsdata.xs2xlsFile -> Data to Excel
     else:
         msg = 'Please run [eXtract XS] before this!'
         show_message(msg)
