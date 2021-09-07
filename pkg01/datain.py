@@ -10,10 +10,13 @@ class FieldDataCSV:
         #self.pathname = fdir + fname
         self.pathname = fname
 
-    def getdata(self):
+    def getdata(self, columns):
+        """
         self.restab = pd.read_csv(self.pathname, encoding='ANSI',
                                   usecols=['Code','Name','N','E','Z'])[['Code','Name','E','N','Z']]
-
+        """
+        self.restab = pd.read_csv(self.pathname, encoding='ANSI',
+                                  usecols=columns)[['Code','Name','E','N','Z']]
     def show_data(self):
         print(self.restab.head(100))
 
@@ -43,8 +46,8 @@ def getXLS():
     return xls1
 
 # Get data from CSV file
-def getRTK(fdir, rtkfile):
+def getRTK(fdir, rtkfile, rtk_columns):
     rtk = FieldDataCSV(fdir+rtkfile)
-    rtk.getdata()                                                       # Get data from csv file
+    rtk.getdata(rtk_columns)                                                       # Get data from csv file
     rtk.show_data()
     return rtk
