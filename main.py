@@ -15,7 +15,7 @@ top = Tk()
 # Set up parameters
 def setparams():
     global doc, cadapp
-    global workdir, rtkfile, outfile
+    global workdir, rtkfile, rtkcolumns
     global xsline_layer, chn_layer
     global xscode_layer, xsname_layer, xspoint_layer
     global xsline_completed_layer
@@ -23,8 +23,9 @@ def setparams():
 
     workdir = proj_params['WorkDirectory']
     rtkfile = proj_params['RTKDatatFile']
-    outfile = proj_params['OutputCsvFile']
-    xlsfile = proj_params['OutputXlsFile']
+    rtkcolumns = proj_params['RTK_Columns']
+    #outfile = proj_params['OutputCsvFile']
+    #xlsfile = proj_params['OutputXlsFile']
     cadapp = proj_params['CadApp']
     xsline_layer = proj_params['XSLineLayer']
     chn_layer = proj_params['ChainageLayer']
@@ -69,8 +70,8 @@ def importpoints():
         return False
     statusbox(sta_label, 'Importing points...')
     #statusbox2('Importing points...')
-    rtkdata = getRTK(workdir, rtkfile)
-    rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
+    rtkdata = getRTK(workdir, rtkfile, rtkcolumns)
+    #rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
 
 def drawxline():
     doc = is_cadready()
