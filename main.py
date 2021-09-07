@@ -71,7 +71,7 @@ def importpoints():
     statusbox(sta_label, 'Importing points...')
     #statusbox2('Importing points...')
     rtkdata = getRTK(workdir, rtkfile, rtkcolumns)
-    #rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
+    rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
 
 def drawxline():
     doc = is_cadready()
