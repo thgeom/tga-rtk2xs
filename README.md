@@ -7,6 +7,7 @@
 {
 "WorkDirectory" : "d:/TGA_TEST/RTK/",
 "RTKDatatFile" : "RTK_X-sec.csv",
+"RTK_Columns" : ["Code", "Name", "N", "E", "Z"],
 "DrawingFile" : "RTK_Point.dwg",
 "OutputCsvFile" : "xsec-0.csv",
 "OutputXlsFile" : "xsec-0.xlsx",
