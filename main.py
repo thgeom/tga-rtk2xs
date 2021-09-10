@@ -61,6 +61,7 @@ def selectfile():
     if cadapp != '' and workdir != '' and conn_ok:
         cad.entryconfig(1, state=NORMAL)
         cad.entryconfig(2, state=NORMAL)
+        statusbox(sta_label, 'AutoCAD connected.')
 
 
 def importpoints():
@@ -127,7 +128,7 @@ def main():
 
     menubar.add_cascade(label="CAD", menu=cad)
     help = Menu(menubar, tearoff=0)
-    help.add_command(label="About")
+    help.add_command(label="About", state=DISABLED)
     menubar.add_cascade(label="Help", menu=help)
 
     top.config(menu=menubar)
