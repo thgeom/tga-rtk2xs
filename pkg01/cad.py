@@ -1,9 +1,12 @@
 import win32com.client                                                  # For Application connection
 import pythoncom
-import comtypes
+#import comtypes
 from pkg02.util import *
 
 acad = win32com.client.Dispatch("AutoCAD.Application")                  # AutoCAD connection
+"""
+Require pywin32
+"""
 #doc = acad.ActiveDocument
 #print(dir(acad))
 
@@ -16,7 +19,7 @@ def is_cadopen():
         cadopen = True
         #return doc
     else:
-        msg = 'AutoCAD is not Running.!!!\n'
+        msg = 'AutoCAD is not Running!!!\n'
         msg += 'Please open AutoCAD Drawing then try again.'
         warn_message(msg)
     return cadopen
@@ -128,7 +131,6 @@ def rtk2ac(rtk1, code_lay, name_lay, point_lay):
     print('Import Field data from RTK')
     acprompt('Hi, from Python : To manage RTK\n')
     acprompt('RTK file importing...\n')
-    #rtk1 = getRTK()
 
     if not layerexist(code_lay):
         doc.Layers.Add(code_lay)                                      # Add layer if not exist

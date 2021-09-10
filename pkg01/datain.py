@@ -16,7 +16,7 @@ class FieldDataCSV:
                                   usecols=['Code','Name','N','E','Z'])[['Code','Name','E','N','Z']]
         """
         self.restab = pd.read_csv(self.pathname, encoding='ANSI',
-                                  usecols=columns)[['Code','Name','E','N','Z']]
+                                  usecols=columns)[columns]
     def show_data(self):
         print(self.restab.head(100))
 
