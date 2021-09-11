@@ -243,6 +243,7 @@ slcn = doc.SelectionSets.Add("SS1")
 
 #==========
 def create_xs_dtab(doci, proj_params, sta_label):
+    global slcn
     global xscode_layer, completed_color, xsline_completed_layer
     global doc, cadapp
     global data4file
@@ -350,6 +351,10 @@ def create_xs_dtab(doci, proj_params, sta_label):
 def create_xs_file(rtkencoding):
     if data4file:
         data4file.xs2File(rtkencoding)                       # Call data4file.xs2File -> Data to Files
+        if not layerexist(xsline_completed_layer):
+            doc.Layers.Add(xsline_completed_layer)
+        for si in slcn:
+            si.Layer = xsline_completed_layer               # change XS_Line to completed
     else:
         msg = 'Please run [eXtract XS] before this!'
         show_message(msg)
