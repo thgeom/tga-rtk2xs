@@ -33,12 +33,13 @@ class Xs4File:
 
 
     # Writing data to Excel file using Pandas Data Frame
-    def xs2File(self):
+    def xs2File(self, dtenconding):
         dfxls = pd.DataFrame(self.dtxls, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to Excel
         dfcsv = pd.DataFrame(self.dtcsv, columns=['Chainage', 'Offset', 'Elevation', 'Code']) # DataFrame to CSV
         dfxyz = pd.DataFrame(self.dtxyz, columns=['East', 'North', 'Elevation', 'Code']) # DataFrame to CSV
 
-        #print(dfcsv)
+        # Display result of X-section in Offset Elevation format
+        print(dfcsv)
         #print(dfxyz)
 
         """
@@ -49,12 +50,14 @@ class Xs4File:
         csvname = self.fdir + self.fcsv
         xyzname = self.fdir + self.fxyz
 
-        #dfxyz.to_csv(xyzname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
-
         try:
             writer1 = pd.ExcelWriter(xlsname, mode='w')
-            dfcsv.to_csv(csvname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
-            dfxyz.to_csv(xyzname, encoding='ANSI', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            #dfcsv.to_csv(csvname, sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            #dfxyz.to_csv(xyzname, sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            dfcsv.to_csv(csvname, encoding='UTF-8', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            dfxyz.to_csv(xyzname, encoding='UTF-8', sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            #dfcsv.to_csv(csvname, encoding=dtenconding, sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
+            #dfxyz.to_csv(xyzname, encoding=dtenconding, sep=' ', quoting=csv.QUOTE_MINIMAL, quotechar=' ', index=False)
         except:
             msg = 'Excel File : {} : currently in use!!!'.format(xlsname)
             msg += '\nPlease close it, then process again.'
@@ -344,9 +347,9 @@ def create_xs_dtab(doci, proj_params, sta_label):
     return data4file
 
 # To create Files of X-section
-def create_xs_file():
+def create_xs_file(rtkencoding):
     if data4file:
-        data4file.xs2File()                                        # Call xlsdata.xs2xlsFile -> Data to Excel
+        data4file.xs2File(rtkencoding)                       # Call data4file.xs2File -> Data to Files
     else:
         msg = 'Please run [eXtract XS] before this!'
         show_message(msg)

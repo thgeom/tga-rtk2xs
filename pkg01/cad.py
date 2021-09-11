@@ -30,7 +30,7 @@ def is_cadready():
     cadready = False
     try:
         doc = acad.ActiveDocument
-        acprompt = doc.Utility.Prompt                                           # ACAD prompt
+        acprompt = doc.Utility.Prompt                                   # ACAD prompt
         ms = doc.ModelSpace
         #print(doc)
         print('File {} connected.'.format(doc.Name))
@@ -91,7 +91,7 @@ def pts2ac(pts, code_lay, name_lay, point_lay):
         name = pt[1]
         #print('Processing point : ' + name)
         if (i % 20) == 0:
-            print('.', end='')                                          # Print dot for every 20 points
+            print('.', end='')                                        # Print dot for every 20 points
             acprompt('.')
 
         p_code = ms.AddText(code, pt_vtpt(p1), 1.5)
@@ -153,48 +153,52 @@ def rtk2ac(rtk1, code_lay, name_lay, point_lay):
 # To create X-section line on "XS_Line" layer
 def cadInput(xspoint_layer):
     doc.Utility.Prompt('Select X-section line : ')
-    xsObjSel = doc.Utility.GetEntity()                  #Get XS_Line entity by pick
+    xsObjSel = doc.Utility.GetEntity()                  # Get XS_Line entity by pick
     #return (<COMObject GetEntity>, (506465.30556296057, 1861201.4573297906, 0.0))
     xsObj = xsObjSel[0]
     #print(xsObj.EndPoint)
     txtpt = None
     while txtpt is None:
         doc.Utility.Prompt('Select Point code of center line : ')
-        pcObjSel = doc.Utility.GetEntity()                  #Get P_Code entity by pick
+        pcObjSel = doc.Utility.GetEntity()                  # Get P_Code entity by pick
         pcObj = pcObjSel[0]
         if pcObj.Layer == xspoint_layer:
             txtpt = pcObj.Layer
     #doc.Utility.Prompt('Chainage or X-section name : ')
-    chn = doc.Utility.GetString(1, 'Chainage or X-section name : ')     #Get CHN string
+    chn = doc.Utility.GetString(1, 'Chainage or X-section name : ')     # Get CHN string
     return [xsObj, pcObj, chn]
 
 def cadProc( xsObj, pcObj, chn, cadapp, xslinelay, chnlay):
     p2 = xsObj.EndPoint
-    chnObj = ms.AddText(chn, pt_vtpt(p2), 5)            #Create CHN @EndPoint
+    chnObj = ms.AddText(chn, pt_vtpt(p2), 5)            # Create CHN @EndPoint
+    if not layerexist(chnlay):
+        doc.Layers.Add(chnlay)                          # Add layer if not exist
     chnObj.Layer = chnlay
     chnObj.Rotation = xsObj.Angle
-    dataType = (1001, 1000, 1005, 1005)                 #Define Xdata
+    dataType = (1001, 1000, 1005, 1005)                 # Define Xdata
     data = (cadapp, chn, chnObj.Handle, pcObj.Handle)
-    dataType = vtint(dataType)                          #Converse dataType format
+    dataType = vtint(dataType)                          # Converse dataType format
     data = vtvariant(data)
-    xsObj.SetXData(dataType, data)                      #Setting Xdata of X-section
+    xsObj.SetXData(dataType, data)                      # Setting Xdata of X-section
     # Return the xdata for the line
     #xtypeOut, xdataOut = xsObj.GetXData("rtk_xs")
     #print(xtypeOut)
     #print(xdataOut)
-    xsObj.Layer = xslinelay                             #Set layer of X-section to "XS_Line"
+    if not layerexist(xslinelay):
+        doc.Layers.Add(xslinelay)                       # Add layer if not exist
+    xsObj.Layer = xslinelay                             # Set layer of X-section to "XS_Line"
 
 # Create X-Section Line
 def createxline(cadapp, xsllay, chnlay, xsptlay):
     ## Start to create X-Section line
     print('>>> Select X-Section on CAD WINDOW')
     try:
-        [xsObj, pcObj, chn] = cadInput(xsptlay)                    #Call cadInput to select X-section,
+        [xsObj, pcObj, chn] = cadInput(xsptlay)                     # Call cadInput to select X-section,
     except:
         return
     #point of center line and define X-section name
-    cadProc(xsObj, pcObj, chn, cadapp, xsllay, chnlay)                         #Call cadProc to manipulate XS_Line
-    doc.Application.Update()                                #Redraw CAD window
+    cadProc(xsObj, pcObj, chn, cadapp, xsllay, chnlay)              # Call cadProc to manipulate XS_Line
+    doc.Application.Update()                                        # Redraw CAD window
     doc.Utility.Prompt('>>>> X-section : {} has been created.\n'.format(chn))
     print('>>>> X-section : {} has been created.'.format(chn))
 
