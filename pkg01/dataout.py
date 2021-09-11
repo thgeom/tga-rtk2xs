@@ -17,12 +17,14 @@ class Xs4File:
         self.dtxyz = []
         self.dtxls = []
 
-    def xsAdd(self, dicsv, dixyz, dixls):
-        for i in dicsv:
+    # Add each X-section data for 3 formats
+    def xsAdd(self, xsobj):
+        #dicsv, dixyz, dixls = xsobj.dt2csv, xsObj.dt2xyz, xsObj.dt2xls
+        for i in xsobj.dt2csv:
             self.dtcsv.append(i)
-        for i in dixyz:
+        for i in xsobj.dt2xyz:
             self.dtxyz.append(i)
-        for i in dixls:
+        for i in xsobj.dt2xls:
             self.dtxls.append(i)
 
     def xs_show_csvdata(self):
@@ -338,7 +340,7 @@ def create_xs_dtab(doci, proj_params, sta_label):
 
             #xsObj1.xs2csvFile('d:/TGA_Lisp/', 'xsec-0.csv')     # Call Xs2File by giving Directory & FileName
             xsObj1.xs2DTab()                  # Call Xs2Df
-            data4file.xsAdd(xsObj1.dt2csv, xsObj1.dt2xyz, xsObj1.dt2xls)
+            data4file.xsAdd(xsObj1)
             #slcn[i].Layer = 'XS_Line_Completed'                 # change XS_Line to completed
         j += 1
     #for
