@@ -1,21 +1,16 @@
-#import sys
-#import win32com
-#import win32com.client
-#from tkinter import Toplevel, Button, Tk, Menu
-#from tkinter import Tk, Menu
 from tkinter import filedialog as fd
 from pkg01.datain import *
 #from pkg01.cad import *
 from pkg01.dataout import *
 from pkg02.util import *
 
-
 top = Tk()
 
 # Set up parameters
+# :project parameter shall be utilized for data manipulation
 def setparams():
     global doc, cadapp
-    global workdir, rtkfile, rtkcolumns
+    global workdir, rtkfile, rtkcolumns, rtkencoding
     global xsline_layer, chn_layer
     global xscode_layer, xsname_layer, xspoint_layer
     global xsline_completed_layer
@@ -23,7 +18,8 @@ def setparams():
 
     workdir = proj_params['WorkDirectory']
     rtkfile = proj_params['RTKDatatFile']
-    rtkcolumns = proj_params['RTK_Columns']
+    rtkcolumns = proj_params['RTKColumns']
+    rtkencoding = proj_params['RTKEncoding']
     #outfile = proj_params['OutputCsvFile']
     #xlsfile = proj_params['OutputXlsFile']
     cadapp = proj_params['CadApp']
@@ -35,11 +31,13 @@ def setparams():
     completed_color = proj_params['CompletedColor']
     xsline_completed_layer = proj_params['XSLineCompletedLayer']
     Buffer = proj_params['Buffer']
-    doc = is_cadopen()
+
+    doc = is_cadopen()                          # Checking AutoCAD is opened or not?
     if doc is None:
         return False
     return doc
 
+# Select parameter file
 def selectfile():
     global proj_params
 
@@ -63,7 +61,7 @@ def selectfile():
         cad.entryconfig(2, state=NORMAL)
         statusbox(sta_label, 'AutoCAD connected.')
 
-
+# To import points from CSV file
 def importpoints():
     #show_message('>>>')
     #print('>>>')
@@ -71,9 +69,10 @@ def importpoints():
         return False
     statusbox(sta_label, 'Importing points...')
     #statusbox2('Importing points...')
-    rtkdata = getRTK(workdir, rtkfile, rtkcolumns)
-    rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)
+    rtkdata = getRTK(workdir, rtkfile, rtkcolumns, rtkencoding)     # Read data from CSV file
+    rtk2ac(rtkdata, xscode_layer, xsname_layer, xspoint_layer)      # Create ACAD points
 
+# Draw X-section line
 def drawxline():
     doc = is_cadready()
     if not doc:
@@ -81,6 +80,7 @@ def drawxline():
     statusbox(sta_label, 'Create Line of X-Section.')
     createxline(cadapp, xsline_layer, chn_layer, xscode_layer)
 
+# To extract points from X-sections
 def xs2dtabs():
     doc = is_cadready()
     if not doc:
@@ -93,9 +93,10 @@ def xs2dtabs():
     #xsdtab.xs_show_csvdata()
     #xsdtab.xs_show_xyzdata()
 
+# To create files of X-sections
 def xs2files():
     statusbox(sta_label, 'Create Files of X-section')
-    create_xs_file()
+    create_xs_file(rtkencoding)
 
 def main():
     global cad, sta_label
@@ -132,10 +133,10 @@ def main():
     menubar.add_cascade(label="Help", menu=help)
 
     top.config(menu=menubar)
-    top.geometry('500x400')
+    top.geometry('590x400')
     top.geometry('+150+100')                 # Position ('+Left+Top')
-    top.title('THGeom Academy (RTK data to X-section data)')
-    sta_label = Label(top, text=': xxx', width=40)
+    top.title('THGeom Academy (RTK data to X-section: Offset & Elevation)')
+    sta_label = Label(top, text=': ', width=40)
     #sta_label.place(x=-1.0, rely=1.0, anchor='sw')
     sta_label.pack()
     sta_label.place(relx=-0.1, rely=1.0, anchor=SW)

@@ -1,8 +1,9 @@
 {
 "WorkDirectory" : "d:/TGA_TEST/RTK/",
 "RTKDatatFile" : "RTK_X-sec.csv",
-"RTK_Columns" : ["Code", "Name", "N", "E", "Z"],
-"DrawingFile" : "RTK_Point.dwg",
+"RTKColumns" : ["Code", "Name", "E", "N", "Z"],
+"RTKEncoding" : "TIS-620",
+"DrawingFile" : "test_RTK.dwg",
 "OutputCsvFile" : "xsec-0.csv",
 "OutputXlsFile" : "xsec-0.xlsx",
 "CadApp" : "rtk_xs",
@@ -10,7 +11,7 @@
 "ChainageLayer" : "CHN_Layer",
 "XSCodeLayer" : "XS_Code",
 "XSNameLayer" : 'XS_Name',
-"XSPointLayer" : 'XS_point',
+"XSPointLayer" : 'XS_Point',
 "CompletedColor"  :  5,
 "XSLineCompletedLayer" : "XS_Line_Completed",
 "Buffer" : 10
