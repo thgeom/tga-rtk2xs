@@ -28,6 +28,8 @@ def setparams():
     xscode_layer = proj_params['XSCodeLayer']
     xsname_layer = proj_params['XSNameLayer']
     xspoint_layer = proj_params['XSPointLayer']
+    #xscomppoint_layer = proj_params['XSComputedPointLayer']
+    #drawxscomppoint = proj_params['DrawXSComputedPoint']
     completed_color = proj_params['CompletedColor']
     xsline_completed_layer = proj_params['XSLineCompletedLayer']
     Buffer = proj_params['Buffer']
