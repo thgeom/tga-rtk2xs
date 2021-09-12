@@ -16,8 +16,10 @@
 "XSLineLayer" : "XS_Line",
 "ChainageLayer" : "CHN_Layer",
 "XSCodeLayer" : "XS_Code",
-"XSNameLayer" : 'XS_Name',
-"XSPointLayer" : 'XS_point',
+"XSNameLayer" : "XS_Name",
+"XSPointLayer" : "XS_point",
+"XSComputedPointLayer" : "XS_Computed",
+"DrawXSComputedPoint" : True,
 "CompletedColor"  :  5,
 "XSLineCompletedLayer" : "XS_Line_Completed",
 "Buffer" : 10
