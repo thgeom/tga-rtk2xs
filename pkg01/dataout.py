@@ -89,6 +89,7 @@ class XsInfo:
         self.dt2csv = []
         self.dt2xyz = []
         self.dt2xls = []
+        #self.dt2enz = []
         XsInfo.num_xs += 1
 
     # Initialize selection set "SS2"
@@ -199,6 +200,7 @@ class XsInfo:
             #f2.write('{0:0.3f}   {1:0.3f}   {2:0.3f}   {3}\n'.format(pt[1][0], pt[1][1], pt[1][2], pt[0]))
             enzi = ([round(pt[1][0],3), round(pt[1][1],3), round(pt[1][2],3), pt[0]])
             self.dt2xyz.append(enzi)
+            #self.dt2enz.append(enzi[:-1])
         # End for
         # Append '#' end of section
         self.dt2xyz.append(['#', '', '', ''])
@@ -208,7 +210,14 @@ class XsInfo:
 
         #self.ename.Layer = xsline_completed_layer      # Set XS_Line layer = "XS_Line_Completed"
 
-
+    # Draw computed points on X-section line
+    def drawXSComputed(self, layer):
+        if not layerexist(layer):
+            doc.Layers.Add(layer)
+        ms = doc.ModelSpace
+        for pt in self.enz:
+            p_pt = ms.AddPoint(pt_vtpt(pt[1]))
+            p_pt.Layer = layer
 
 """
 #object.Select( Mode , Point1 , Point2 , FilterType , FilterData )
@@ -246,8 +255,8 @@ slcn = doc.SelectionSets.Add("SS1")
 #==========
 def create_xs_dtab(doci, proj_params, sta_label):
     global slcn
-    global xscode_layer, completed_color, xsline_completed_layer
-    global doc, cadapp
+    global xscode_layer, completed_color, xsline_completed_layer, xscomppoint_layer
+    global doc, cadapp, drawxscomppoint
     global data4file
 
     doc = doci
@@ -262,6 +271,8 @@ def create_xs_dtab(doci, proj_params, sta_label):
     completed_color = proj_params['CompletedColor']
     xsline_completed_layer = proj_params['XSLineCompletedLayer']
     Buffer = proj_params['Buffer']
+    xscomppoint_layer = proj_params['XSComputedPointLayer']
+    drawxscomppoint = proj_params['DrawXSComputedPoint']
 
     # Add the name "SS1" selection set
     try:
@@ -339,7 +350,9 @@ def create_xs_dtab(doci, proj_params, sta_label):
             #print(xsObj1.enz)
 
             #xsObj1.xs2csvFile('d:/TGA_Lisp/', 'xsec-0.csv')     # Call Xs2File by giving Directory & FileName
-            xsObj1.xs2DTab()                  # Call Xs2Df
+            xsObj1.xs2DTab()                    # Call xs2DTab
+            if drawxscomppoint:                 # Draw computed XS on X-section line
+                xsObj1.drawXSComputed(xscomppoint_layer)
             data4file.xsAdd(xsObj1)
             #slcn[i].Layer = 'XS_Line_Completed'                 # change XS_Line to completed
         j += 1
