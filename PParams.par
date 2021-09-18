@@ -21,8 +21,9 @@
 # Note:
 # List of folder & files 
 #===============
-# WorkDirectory  =  "d:/TGA_Test/RTK/"
+# "WorkDirectory" : "d:/TGA_Test/RTK/"
 # "RTKDatatFile" : "RTK_X-sec.csv""   ; case insensitive
 # "DrawingFile" : "RTK_Point.dwg"   ; case insensitive
-# "OutputFile =  "Loop-2_out.xlsx"
+# "OutputCsvFile" : "xsec-0.csv"
+# "OutputXlsFile =  "xsec-0.xlsx"
 
