@@ -107,3 +107,19 @@ def sort_x(lis):
 def sort_rtk_x(lis):
     return sorted(lis, key=lambda e: e[1])
     #return lis2
+
+# To convert Area in square meters to Rai-Ngan-Wa, "prec" is the precision of square Wa
+def r_n_w(sqm, prec=1):
+    is_negative = sqm < 0
+    sqm = abs(sqm)
+    wa = sqm / 4.0
+    rr = wa / 400.0
+    r = int(rr)
+    ng = int((rr - r) * 4)
+    wa = wa - (r * 400) - (ng * 100)
+    ng = str(ng)
+    wa = str(round(wa, prec))
+    if prec==0:
+        wa = wa[0:-2]
+    if is_negative: r = - r
+    return '{:d}-{}-{}'.format(r, ng, wa)
